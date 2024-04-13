@@ -11,7 +11,7 @@ cloudinary.config({
 });
 
 
-const uploadonCloudinary = async (localFilePath) =>{
+const uploadonCloudinary = async (localFilePath) =>{   // localfilepath multer dega
     try {
         if(!localFilePath) return null
 
