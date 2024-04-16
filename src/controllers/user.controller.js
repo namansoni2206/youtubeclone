@@ -3,6 +3,7 @@ import {ApiError} from "../utils/ApiErrors.js"
 import { User } from "../models/user.models.js";
 import {uploadonCloudinary} from "../utils/cloudinary.js"
 import { ApiResponse } from "../utils/ApiResponse..js";
+
 // const registerUser = asyncHandler(async (req,res) => {
 //     res.status(200).json({
 //         message : "Finally Error Resolved" 
@@ -29,6 +30,9 @@ const registerUser = asyncHandler(async (req,res) => {
     //1) json data 
     const {fullName,email,username,password} = req.body
     console.log("email : ",email);
+    console.log("username : ",username);
+    console.log(password);
+    console.log(fullName);
 
     // for file handling - data - user.routes
 
@@ -41,13 +45,13 @@ const registerUser = asyncHandler(async (req,res) => {
 
   // ii)
   if (
-    [fullName , email , username , password].some((filed) => filed?.trim()==="")
+    [fullName , email , username , password].some((field) => field?.trim()==="")
   ) {
     throw new ApiError(400,"All fields are required")
   }
 
   // 3) 
-   const existedUser = User.findOne({
+   const existedUser = await User.findOne({
     $or : [ { username } , { email }]
   })
 
@@ -72,7 +76,7 @@ const registerUser = asyncHandler(async (req,res) => {
   }
 
   // 6)
-  const user = User.create({
+  const user = await User.create({
     fullName,
     avatar : avatar.url,
     coverImage : coverImage?.url||"",       // if not there then ""
@@ -83,6 +87,7 @@ const registerUser = asyncHandler(async (req,res) => {
 
   // 7)
   const createdUser = await User.findById(user._id).select("-password -refreshToken")
+  console.log(createdUser);
 
   // 8)
   if(!createdUser){
