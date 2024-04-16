@@ -17,6 +17,9 @@ const uploadonCloudinary = async (localFilePath) =>{   // localfilepath multer d
         const response = await cloudinary.uploader.upload(localFilePath,{
             resource_type : "auto"
         })
+        
+        //remove file from local
+        fs.unlinkSync(localFilePath)
         return response;
 
        
