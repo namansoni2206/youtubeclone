@@ -2,13 +2,13 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import {ApiError} from "../utils/ApiErrors.js"
 import { User } from "../models/user.models.js";
 import {uploadonCloudinary} from "../utils/cloudinary.js"
-import { ApiResponse } from "../utils/ApiResponse..js";
+import { ApiResponse } from "../utils/ApiResponse.js";
 
 
 
 // generate the access and refresh token. Here I am creating a method
 
-const generateAccessandRefreshTokens = async(userId) =>{
+const generateAccessAndRefereshTokens = async(userId) =>{
     try {
         const user = await User.findById(userId)
         const accessToken = user.generateAccessToken();
@@ -18,6 +18,7 @@ const generateAccessandRefreshTokens = async(userId) =>{
         await user.save({validateBeforeSave : false})
 
         return {accessToken,refreshToken};
+
     } catch (error) {
         throw new ApiError(500,"Something went wrong while generating tokens")
         
@@ -46,7 +47,7 @@ const registerUser = asyncHandler(async (req,res) => {
 
     //1) json data 
     const {fullName,email,username,password} = req.body
-    // console.log("email : ",email);
+    // console.log("req : ",req.body);
 
     // 1) for file handling - data - user.routes
 
@@ -137,10 +138,13 @@ const loginUser = asyncHandler( async (req,res)=> {
     // 6) send cookie
 
     // 1)
-    const {email,username,password} = req.body;
+    const {email, username, password} = req.body
+    console.log(req.body);
+    console.log(email);
+    console.log(username);
 
     // 2)
-    if (!username || !email) {
+    if (!username && !email) {
         throw new ApiError(400,"Username or email required")  
     }
 
@@ -160,7 +164,7 @@ const loginUser = asyncHandler( async (req,res)=> {
     }
 
     // 5) 
-    const {accessToken , refreshToken} = await generateAccessandRefreshTokens(user._id);
+    const {accessToken , refreshToken} = await generateAccessAndRefereshTokens(user._id);
 
     const loggedInUser = await User.findById(user._id).select("-password -refreshToken")
 
@@ -170,7 +174,7 @@ const loginUser = asyncHandler( async (req,res)=> {
         secure : true
     }
 
-    return res.statu(200).cookie("accessToken",accessToken,options).cookie("refreshToken",refreshToken,options).json(
+    return res.status(200).cookie("accessToken",accessToken,options).cookie("refreshToken",refreshToken,options).json(
             new ApiResponse (200 ,{
             user : loggedInUser,
             accessToken,
@@ -178,7 +182,7 @@ const loginUser = asyncHandler( async (req,res)=> {
         },
         "User logged In successfully"))
 
-})
+});
 
 
 const logoutUser = asyncHandler(async (req,res) => {
