@@ -4,6 +4,7 @@ import { User } from "../models/user.models.js";
 import {uploadonCloudinary} from "../utils/cloudinary.js"
 import { ApiResponse } from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken"
+import mongoose from "mongoose";
 
 
 
@@ -268,9 +269,12 @@ const ChangeCurrentPassword = asyncHandler(async(req,res)=>{
   )
 })
 
-const getCurrentUser = asyncHandler(async(res,req)=>{
-  return res.status(200).json(
-    new ApiResponse(200, req.user, "Current User fetched Successfully"))
+const getCurrentUser = asyncHandler(async(req, res) => {
+  return res.status(200).json(new ApiResponse(
+      200,
+      req.user,
+      "User fetched successfully"
+  ))
 })
 
 const updateAccountDetails = asyncHandler(async(req,res)=>{
